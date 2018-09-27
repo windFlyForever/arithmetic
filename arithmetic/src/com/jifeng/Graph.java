@@ -57,6 +57,79 @@ public class Graph {
 	}
 	
 	
+	
+	//迪杰斯特拉算法	
+		public static int dijkstra(Graph g,int start,int finish) {
+			int visit[]=new int[105];
+			int min_distance[]=new int[105];					
+			int i,j,min,min_pos=0;
+			
+			for (i = 0; i < g.nodeCount; i++) {
+				min_distance[i]=g.edgeValues[start][i];
+				
+			}
+			
+			visit[0]=1;
+			min_distance[0]=0;
+
+			for (i = 0; i < g.nodeCount; i++) {
+				min_pos=-1;
+				min=-1;
+				
+				for (j = 0; j< g.nodeCount; j++) {
+					if(visit[j]==0&&min_distance[j]>0&&(min==-1||min>min_distance[j])) {
+						min=min_distance[j];
+						min_pos=j;
+					}
+				}
+				//当剩余节点和当前生成树无法相连时，图不连通，无法构成生成树
+				if(min_pos==-1) {
+					break;
+				}
+				visit[min_pos]=1;
+				
+				
+				for (j  = 0; j < g.nodeCount; j++) {
+					
+					if(visit[j]==0&&g.edgeValues[min_pos][j]>=0&&(min_distance[j]<0||min_distance[j]>(g.edgeValues[min_pos][j]+min_distance[min_pos]))) {
+						min_distance[j]=g.edgeValues[min_pos][j]+min_distance[min_pos];
+									
+					}
+				}
+				
+			}
+			
+			return min_distance[finish];
+		}
+		
+		
+		
+		
+		public static void floyd(Graph g) {
+			int i,j,k=0;
+			
+			for (k = 0; k < g.nodeCount; k++) {
+				for (i = 0; i < g.nodeCount; i++) {
+					
+					if(k==i)  continue;
+					
+					for (j = 0; j < g.nodeCount; j++) {
+						if(i!=j&&j!=k&&g.edgeValues[i][j]>g.edgeValues[i][k]+g.edgeValues[k][j]) {
+							g.edgeValues[i][j]=g.edgeValues[i][k]+g.edgeValues[k][j];
+						}
+					}
+					
+				}	
+			}
+			
+			for (i = 0; i< g.nodeCount; i++) {
+				for (j = i+1; j < g.nodeCount; j++) {
+					System.out.println("Node"+i+"----"+"Node"+j+"的最小距离为："+g.edgeValues[i][j]);
+				}
+			}
+		}
+	
+	
 	public static void main(String[] args) {
 		Graph g=new Graph();
 		int[][] ge=g.edgeValues;
@@ -74,7 +147,10 @@ public class Graph {
 		g.edgeValues[5][3]=g.edgeValues[3][5]=2;
 		g.edgeValues[5][4]=g.edgeValues[4][5]=6;
 		int value=prim(g,new  int[105]);
+		int dvalue=dijkstra(g, 0, 4);
 		System.out.println(value);
+		System.out.println(dvalue);
+		
 		
 	}
 	
